@@ -1,0 +1,163 @@
+﻿@model WebApplication6.Models.singin
+
+@{
+    ViewBag.Title = "singin";
+    Layout = "~/Views/sheard/_LayoutPage1.cshtml";
+}
+
+@section head{
+    <link rel="stylesheet" href="~/css/signin.css">
+}
+
+<div class="d-flex flex-column visible col-5 bg-light" id="d-form">
+    <div id="d-h" class="bg-danger p-1">
+        <h3 class="w-100">ثبت نام</h3>
+    </div>
+
+    @using (Html.BeginForm("singin", "accont", FormMethod.Post, null))
+    {
+        <div class="form-group">
+            <label>نام</label>@Html.EditorFor(m => m.Name.Ferst_Name)
+            @if (@Model.Name != null)
+            {
+                if (@Model.Name.Ferst_Name_error != null)
+                {<label class="error-box">@Model.Name.Ferst_Name_error</label>}
+            }
+            
+        </div>
+
+        <div class="form-group">
+            <label>نام خانوادگی</label>@Html.EditorFor(m => m.Name.Last_Name)
+            @if (@Model.Name != null)
+            {
+                if (@Model.Name.Last_Name_error != null)
+                {<label class="error-box">@Model.Name.Last_Name_error</label>}
+            }
+        </div>
+        <div class="form-group">
+            <label>نام کاربری</label>@Html.EditorFor(m => m.UserName.userName)
+
+            @if (@Model.UserName != null)
+            {
+                if (@Model.UserName.userName_error != null)
+                {<label class="error-box">@Model.UserName.userName_error</label>}
+                if (@Model.data_dusername_error != null)
+                {<label class="error-box">@Model.data_dusername_error </label>}
+            }
+           
+        </div>
+        
+        <div class="form-group">
+            <label>ایمیل</label>@Html.EditorFor(m => m.Email.email)
+            @if (@Model.Email != null)
+            {
+                if (@Model.Email.email_error != null)
+                {<label class="error-box">@Model.Email.email_error</label>}
+                if (@Model.data_email_error != null)
+                {<label class="error-box">@Model.data_email_error</label>}
+            }
+            
+        </div>
+        <div class="form-group">
+            <label>شماره تلفن</label>@Html.EditorFor(m => m.Number.number)
+            @if (@Model.Number != null)
+            {
+                if (@Model.Number.number_error != null)
+                {<label class="error-box">@Model.Number.number_error</label>}
+                if (@Model.data_number_error!= null)
+                {<label class="error-box">@Model.data_number_error</label>}
+            }
+           
+        </div>
+        <div class="form-group">
+            <label>گذرواژه</label>
+            @Html.EditorFor(m => m.Password.password)
+            @if (@Model.Password != null)
+            {
+                if (@Model.Password.password_error != null)
+                {<label class="error-box">@Model.Password.password_error</label>}
+            }
+
+            
+        </div>
+        <div class="form-group">
+            <label>تایید گذرواژه</label>
+            @Html.EditorFor(m => m.Password.ConfirmPassword)
+            @if (@Model.Password != null)
+            {
+                if (@Model.Password.ConfirmPassword_error != null)
+                {<label class="error-box">@Model.Password.ConfirmPassword_error</label>}
+            }
+           
+        </div>
+
+        <button class="btn btn-primary" type="submit">ثبت نام</button>
+    }
+
+</div>
+@Html.ActionLink("وارد شوید", "login")
+@section sqript{
+    <script>
+        $(document).ready(function () {
+
+            $(".text-box").addClass('form-control');
+            $(".error-box").addClass("t-error")
+            $(".error-box").siblings("input").addClass("error")
+            //xhttp.open("get", "signin", true);
+            //xhttp.send();
+            $("input").change(function () {
+                // alert("helo");
+                
+                var jason = {
+                    "name": $(this).attr("name"),
+                    "valu": $(this).val()
+                }
+                // alert(jason.name + " " + jason.valu);
+                var name;
+                var error;
+                var This = this;
+                $(This).siblings(".error-box").remove();
+                   $.ajax({
+                    url: "@Url.Action("ajax")",
+                    type: "post",
+                    data: JSON.stringify(jason),
+                    contentType: "application/json; charset=utf-8",
+                    datatype: "json",
+                    error: function (response) {
+                        alert(response.responseText)
+                    },
+                    success: function (model) {
+
+                        name = model.name;
+                        if (model.error != null) error = model.error;
+                        else if (model.data_error) error = model.data_error;
+                        else error = null;
+
+                        if (error != null) {
+                            $(This).removeClass("succes");
+                            $(This).after(' <label class="error-box">' + error + '</label>');
+                        } else {
+                            $(This).removeClass("error");
+                            $(This).addClass("succes");
+                            $(This).siblings(".error-box").remove();
+                            
+                        }
+                        
+                        
+                        $(".error-box").addClass("t-error");
+                        $(".error-box").siblings("input").addClass("error");
+                        
+
+                        
+                    }
+
+                
+
+                   })
+
+            })
+
+
+        });
+    </script>
+}
